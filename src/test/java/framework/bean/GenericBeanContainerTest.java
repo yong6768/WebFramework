@@ -1,4 +1,4 @@
-package framework.bean.factory;
+package framework.bean;
 
 import framework.exception.bean.BeanStoreException;
 import framework.exception.bean.BeansException;
