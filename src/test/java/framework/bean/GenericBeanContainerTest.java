@@ -14,11 +14,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class GenericBeanContainerTest {
 
-    BeanContainer beanContainer = new GenericBeanContainer();
-
+    BeanContainer beanContainer;
     @BeforeEach
     void beforeEach() {
-        beanContainer.clear();
+        beanContainer = new GenericBeanContainer();
     }
 
     @Test
