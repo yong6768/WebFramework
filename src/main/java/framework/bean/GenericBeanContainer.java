@@ -15,10 +15,6 @@ public class GenericBeanContainer implements BeanContainer {
 
     private static final ConcurrentHashMap<String, Object> beanContainer = new ConcurrentHashMap<>();
 
-    public GenericBeanContainer() {
-        beanContainer.put(this.getClass().getName(), this);
-    }
-
     @Override
     public void registerBean(String name, Object bean) throws BeanStoreException {
         Assert.notNull(name, "name must not be null");
@@ -50,6 +46,17 @@ public class GenericBeanContainer implements BeanContainer {
         }
 
         return bean;
+    }
+
+    @Override
+    public <T> T getBean(String name, Class<T> requiredType) throws NoSuchBeanException {
+        Assert.notNull(name, "name must not be null");
+        Assert.notNull(requiredType, "requiredType must not be null");
+
+        Object bean = this.getBean(name);
+        if(!requiredType.isInstance(bean))
+            throw new NoSuchBeanException("Bean is not registered, Bean: ["+name+"], type: ["+requiredType+"]");
+        return (T)bean;
     }
 
     @Override

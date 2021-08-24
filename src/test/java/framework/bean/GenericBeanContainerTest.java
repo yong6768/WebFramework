@@ -14,15 +14,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class GenericBeanContainerTest {
 
-    BeanContainer beanContainer = null;
+    BeanContainer beanContainer = new GenericBeanContainer();
 
     @BeforeEach
     void beforeEach() {
-        beanContainer = new GenericBeanContainer();
-    }
-
-    @AfterEach
-    void afterEach() {
         beanContainer.clear();
     }
 
@@ -39,7 +34,7 @@ class GenericBeanContainerTest {
         beanContainer.registerBean(beanName2, bean2);
 
         //then
-        assertThat(beanContainer.getBeanCount()).isEqualTo(3);
+        assertThat(beanContainer.getBeanCount()).isEqualTo(2);
         assertThat(beanContainer.getBeanNames()).contains(beanName1, beanName2);
         assertThat(beanContainer.getBean(beanName1)).isEqualTo(bean1);
         assertThat(beanContainer.getBean(beanName2)).isEqualTo(bean2);

@@ -1,4 +1,4 @@
 package framework.bean;
 
-public interface BeanContainer extends BeanFactory, BeanRegistry {
+public interface BeanContainer extends BeanService, BeanRegistry {
 }
