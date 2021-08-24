@@ -1,0 +1,22 @@
+{
+  "beans": [
+    {
+      "name": "/hello-world",
+      "class": "web.controller.TestHelloWorldController",
+      "dependencies": [
+        "hello",
+        "worldService"
+      ]
+    },
+    {
+      "name": "helloService",
+      "class": "web.service.TestHelloService",
+      "dependencies": []
+    },
+    {
+      "name": "worldService",
+      "class": "web.service.TestWorldService",
+      "dependencies": []
+    }
+  ]
+}

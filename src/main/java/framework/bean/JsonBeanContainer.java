@@ -60,13 +60,8 @@ public class JsonBeanContainer extends GenericBeanContainer {
             Constructor constructor = getConstructor(beanName);
             List parameter = getParameter(beanName);
 
-            log.info("beanName: {}", beanName);
-            log.info("parameter count: {}", parameter.size());
             Object bean = constructor.newInstance(parameter.toArray());
-            log.info("bean count: {}", super.getBeanCount());
             super.registerBean(beanName, bean);
-            log.info("bean count: {}", super.getBeanCount());
-
             return bean;
         } catch (Exception e) {
             throw new BeanNotValidException(e);

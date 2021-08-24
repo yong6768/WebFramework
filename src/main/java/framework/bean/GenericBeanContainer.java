@@ -5,15 +5,17 @@ import framework.exception.bean.BeansException;
 import framework.exception.bean.NoSuchBeanException;
 import framework.exception.bean.NoUniqueBeanException;
 import framework.util.Assert;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Slf4j
 public class GenericBeanContainer implements BeanContainer {
 
-    private static final ConcurrentHashMap<String, Object> beanContainer = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Object> beanContainer = new ConcurrentHashMap<>();
 
     @Override
     public void registerBean(String name, Object bean) throws BeanStoreException {
@@ -23,6 +25,7 @@ public class GenericBeanContainer implements BeanContainer {
             throw new BeanStoreException("Bean name is already registered, Bean: ["+name+"]");
         }
 
+        log.info("bean in registered, name: {}, bean: {}-{}", name, bean.getClass().getName(), bean.hashCode());
         beanContainer.put(name, bean);
     }
 
@@ -33,6 +36,7 @@ public class GenericBeanContainer implements BeanContainer {
             throw new NoSuchBeanException("Bean is not registered, Bean: ["+beanName+"]");
         }
 
+        log.info("bean in removed, name: {}", beanName);
         beanContainer.remove(beanName);
     }
 
