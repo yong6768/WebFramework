@@ -1,4 +1,4 @@
-package web.service;
+package testmvc.jsonBeanContainer.service;
 
 import lombok.extern.slf4j.Slf4j;
 
