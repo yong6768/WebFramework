@@ -1,8 +1,8 @@
-package web.controller;
+package testmvc.jsonBeanContainer.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import web.service.TestHelloService;
-import web.service.TestWorldService;
+import testmvc.jsonBeanContainer.service.TestHelloService;
+import testmvc.jsonBeanContainer.service.TestWorldService;
 
 @Slf4j
 public class TestHelloWorldController {

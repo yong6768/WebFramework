@@ -70,11 +70,21 @@ public class JsonBeanContainer extends GenericBeanContainer {
 
     private Constructor getConstructor(String beanName) throws ClassNotFoundException, BeanNotValidException {
         BeanConfig.Bean beanInfo = beanNameToBeanInfoMapper.get(beanName);
-        Constructor<?>[] constructors = Class.forName(beanInfo.getClassPath()).getConstructors();
-        if(constructors.length != 1)
-            throw new BeanNotValidException("Bean must have only 1 constructor");
 
-        return constructors[0];
+        // 생성자가 하나인 경우 해당 생성자 사용
+       Constructor<?>[] constructors = Class.forName(beanInfo.getClassPath()).getConstructors();
+       if(constructors.length == 1)
+           return constructors[0];
+
+       // 생성자가 여러 개인 경우 @Authwired가 붙은 생성자 사용
+        List<Constructor<?>> autowiredConstructor = Arrays.stream(constructors)
+                .filter(constructor -> constructor.isAnnotationPresent(Autowired.class))
+                .collect(Collectors.toList());
+
+        if(autowiredConstructor.size() != 1)
+            throw new BeanNotValidException("Bean must have only 1 constructor or only 1 @Autowired annotated constructor");
+
+        return autowiredConstructor.get(0);
     }
 
     private List getParameter(String beanName) throws BeanNotValidException {

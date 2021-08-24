@@ -1,0 +1,22 @@
+{
+  "beans": [
+    {
+      "name": "/hello-world",
+      "class": "testmvc.jsonBeanContainer.controller.ManyAutowiredController",
+      "dependencies": [
+        "helloService",
+        "worldService"
+      ]
+    },
+    {
+      "name": "helloService",
+      "class": "testmvc.jsonBeanContainer.service.TestHelloService",
+      "dependencies": []
+    },
+    {
+      "name": "worldService",
+      "class": "testmvc.jsonBeanContainer.service.TestWorldService",
+      "dependencies": []
+    }
+  ]
+}

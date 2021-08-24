@@ -2,7 +2,7 @@
   "beans": [
     {
       "name": "/hello-world",
-      "class": "web.controller.TestHelloWorldController",
+      "class": "testmvc.jsonBeanContainer.controller.TestHelloWorldController",
       "dependencies": [
         "hello",
         "worldService"
@@ -10,12 +10,12 @@
     },
     {
       "name": "helloService",
-      "class": "web.service.TestHelloService",
+      "class": "testmvc.jsonBeanContainer.service.TestHelloService",
       "dependencies": []
     },
     {
       "name": "worldService",
-      "class": "web.service.TestWorldService",
+      "class": "testmvc.jsonBeanContainer.service.TestWorldService",
       "dependencies": []
     }
   ]
