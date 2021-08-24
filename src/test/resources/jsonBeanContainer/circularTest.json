@@ -1,0 +1,25 @@
+{
+  "beans": [
+    {
+      "name": "circularA",
+      "class": "testmvc.jsonBeanContainer.circular.CircularA",
+      "dependencies": [
+        "circularB"
+      ]
+    },
+    {
+      "name": "circularB",
+      "class": "testmvc.jsonBeanContainer.circular.CircularB",
+      "dependencies": [
+        "circularC"
+      ]
+    },
+    {
+      "name": "circularC",
+      "class": "testmvc.jsonBeanContainer.circular.CircularC",
+      "dependencies": [
+        "circularA"
+      ]
+    }
+  ]
+}

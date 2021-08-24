@@ -2,7 +2,9 @@ package framework.bean;
 
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import framework.exception.bean.BeanNotValidException;
-import framework.exception.bean.NoSuchBeanException;
+import framework.exception.bean.BeansException;
+import framework.exception.bean.CircularReferenceBeanException;
+import framework.exception.bean.NoUniqueBeanException;
 import org.junit.jupiter.api.Test;
 import testmvc.jsonBeanContainer.controller.AutowiredCheckController;
 import testmvc.jsonBeanContainer.controller.TestHelloWorldController;
@@ -16,7 +18,7 @@ class JsonBeanContainerTest {
     private static final String prefix = "jsonBeanContainer";
 
     @Test
-    void 테스트_컨트롤러_호출() throws IOException, BeanNotValidException, NoSuchBeanException {
+    void 테스트_컨트롤러_호출() throws IOException, BeansException {
         JsonBeanContainer beanContainer = new JsonBeanContainer(prefix+"/beans.json");
 
         TestHelloWorldController helloWorldController = beanContainer.getBean("/hello-world", TestHelloWorldController.class);
@@ -40,7 +42,7 @@ class JsonBeanContainerTest {
     }
 
     @Test
-    void Autowired_생성자_호출() throws IOException, BeanNotValidException, NoSuchBeanException {
+    void Autowired_생성자_호출() throws IOException, BeansException {
         JsonBeanContainer beanContainer = new JsonBeanContainer(prefix+"/autowiredCheck.json");
 
         AutowiredCheckController autowiredCheckController = beanContainer.getBean("/hello-world", AutowiredCheckController.class);
@@ -52,6 +54,22 @@ class JsonBeanContainerTest {
         assertThrows(
                 BeanNotValidException.class,
                 () -> new JsonBeanContainer(prefix+"/manyAutowiredCheck.json")
+        );
+    }
+
+    @Test
+    void Bean_순환참조_검증() throws IOException, BeansException {
+        assertThrows(
+                CircularReferenceBeanException.class,
+                () -> new JsonBeanContainer(prefix+"/circularTest.json")
+        );
+    }
+
+    @Test
+    void Bean_이름중복_검증() throws IOException, BeansException {
+        assertThrows(
+                NoUniqueBeanException.class,
+                () -> new JsonBeanContainer(prefix+"/dupBeanName.json")
         );
     }
 }
