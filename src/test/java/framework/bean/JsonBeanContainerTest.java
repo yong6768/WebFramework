@@ -27,10 +27,11 @@ class JsonBeanContainerTest {
 
     @Test
     void 빈_이름_오류_검증() {
-        assertThrows(
+        BeanNotValidException beanNotValidException = assertThrows(
                 BeanNotValidException.class,
-                () -> new JsonBeanContainer(prefix+"/notValidBeanName.json")
+                () -> new JsonBeanContainer(prefix + "/notValidBeanName.json")
         );
+        System.out.println("beanNotValidException = " + beanNotValidException);
     }
 
     @Test
@@ -59,9 +60,9 @@ class JsonBeanContainerTest {
 
     @Test
     void Bean_순환참조_검증() throws IOException, BeansException {
-        assertThrows(
+        CircularReferenceBeanException circularReferenceBeanException = assertThrows(
                 CircularReferenceBeanException.class,
-                () -> new JsonBeanContainer(prefix+"/circularTest.json")
+                () -> new JsonBeanContainer(prefix + "/circularTest.json")
         );
     }
 

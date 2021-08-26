@@ -18,8 +18,6 @@ import java.util.stream.Collectors;
 public class JsonBeanContainer extends GenericBeanContainer {
 
     private HashMap<String, BeanConfig.Bean> beanNameToBeanInfoMapper = new HashMap<>();
-    private HashMap<String, List<BeanConfig.Bean>> beanNameToDependenciesMapper = new HashMap<>();
-    private Stack<String> circularCheck = new Stack<>();
 
     public JsonBeanContainer (String path) throws IOException, BeansException {
         byte[] data = getClass().getClassLoader().getResourceAsStream(path).readAllBytes();
@@ -35,13 +33,6 @@ public class JsonBeanContainer extends GenericBeanContainer {
             beanNameToBeanInfoMapper.put(bean.getName(), bean);
         }
 
-        for(BeanConfig.Bean bean: beans) {
-            List<BeanConfig.Bean> dependencies = Arrays.stream(bean.getDependencies())
-                    .map(beanName -> beanNameToBeanInfoMapper.get(beanName)).collect(Collectors.toList());
-
-            beanNameToDependenciesMapper.put(bean.getName(), dependencies);
-        }
-
         validateBeanConfig(beans);
 
         registerBeans(beans);
@@ -54,16 +45,8 @@ public class JsonBeanContainer extends GenericBeanContainer {
     }
 
     private Object registerAndGetBean(String beanName) throws BeansException {
-        if(circularCheck.contains(beanName)) {
-            circularCheck.push(beanName);
-            List<String> beanCallChain = circularCheck.subList(circularCheck.indexOf(beanName), circularCheck.size());
-            throw new CircularReferenceBeanException(String.join("->", beanCallChain));
-        }
-        circularCheck.push(beanName);
-
         try {
             Object bean =super.getBean(beanName);
-            circularCheck.pop();
             return bean;
         } catch (Exception e) {}
 
@@ -82,7 +65,6 @@ public class JsonBeanContainer extends GenericBeanContainer {
         } catch (Exception e) {
             throw new BeanNotValidException(e);
         } finally {
-            circularCheck.pop();
         }
     }
 
@@ -115,7 +97,7 @@ public class JsonBeanContainer extends GenericBeanContainer {
         return parameters;
     }
 
-    private void validateBeanConfig(BeanConfig.Bean[] beans) throws NoUniqueBeanException {
+    private void validateBeanConfig(BeanConfig.Bean[] beans) throws NoUniqueBeanException, CircularReferenceBeanException, BeanNotValidException {
         // Bean 이름 중복 검증
         Map<String, Long> beanNameCount = Arrays.stream(beans).collect(Collectors.groupingBy(
                 f -> f.name, Collectors.counting()
@@ -125,8 +107,30 @@ public class JsonBeanContainer extends GenericBeanContainer {
                 throw new NoUniqueBeanException("Bean["+beanName+"] is declared many times");
         }
 
-        // 순환 참조 검증
+        // 순환 참조 및 의존성 검증
+        for (BeanConfig.Bean bean : beans) {
+            Stack<String> circularCheck = new Stack<>();
+            validatingCircularReference(bean.getName(), circularCheck);
+        }
+    }
 
+    private void validatingCircularReference(String beanName, Stack<String> circularCheck) throws CircularReferenceBeanException, BeanNotValidException {
+        if(circularCheck.contains(beanName)) {
+            circularCheck.push(beanName);
+            List<String> beanCallChain = circularCheck.subList(circularCheck.indexOf(beanName), circularCheck.size());
+            throw new CircularReferenceBeanException(String.join("->", beanCallChain));
+        }
+        circularCheck.push(beanName);
+        
+        BeanConfig.Bean beanInfo = beanNameToBeanInfoMapper.get(beanName);
+        if(beanInfo == null) {
+            circularCheck.pop();
+            throw new BeanNotValidException("Bean["+circularCheck.peek()+"] depends on Bean["+beanName+"], but not exists");
+        }
+        for (String dependency : beanInfo.getDependencies()) {
+            validatingCircularReference(dependency, circularCheck);
+        }
+        circularCheck.pop();
     }
 
     @Getter

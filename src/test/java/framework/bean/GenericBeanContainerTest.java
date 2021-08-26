@@ -4,7 +4,6 @@ import framework.exception.bean.BeanStoreException;
 import framework.exception.bean.BeansException;
 import framework.exception.bean.NoSuchBeanException;
 import framework.exception.bean.NoUniqueBeanException;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
