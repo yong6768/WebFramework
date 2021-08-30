@@ -1,4 +1,4 @@
-package framework.request.handle.mvc;
+package framework.servlet.handler.mvc;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

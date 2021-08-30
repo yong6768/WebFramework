@@ -1,4 +1,4 @@
-package framework.request.handle;
+package framework.servlet.handler;
 
 import javax.servlet.http.HttpServletRequest;
 

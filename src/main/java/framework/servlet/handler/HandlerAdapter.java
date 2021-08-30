@@ -1,6 +1,6 @@
-package framework.request.handle;
+package framework.servlet.handler;
 
-import framework.request.handle.mvc.ModelAndView;
+import framework.servlet.handler.mvc.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
