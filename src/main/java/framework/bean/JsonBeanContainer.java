@@ -19,26 +19,33 @@ public class JsonBeanContainer extends GenericBeanContainer {
 
     private HashMap<String, BeanConfig.Bean> beanNameToBeanInfoMapper = new HashMap<>();
 
-    public JsonBeanContainer (String path) throws IOException, BeansException {
-        byte[] data = getClass().getClassLoader().getResourceAsStream(path).readAllBytes();
-        initializeBean(data);
+    public JsonBeanContainer (String... paths) throws IOException, BeansException {
+        List<BeanConfig.Bean> beans = new ArrayList<>();
+        for (String path: paths) {
+            byte[] data = getClass().getClassLoader().getResourceAsStream(path).readAllBytes();
+            for (BeanConfig.Bean bean : readJsonFile(data)) {
+                beans.add(bean);
+            }
+        }
+        initializeBean(beans);
     }
 
-    private void initializeBean(byte[] data) throws IOException, BeansException {
+    private BeanConfig.Bean[] readJsonFile(byte[] data) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         BeanConfig beanConfig = mapper.readValue(data, BeanConfig.class);
-        BeanConfig.Bean[] beans = beanConfig.getBeans();
+        return beanConfig.getBeans();
+    }
 
+    private void initializeBean(Collection<BeanConfig.Bean> beans) throws IOException, BeansException {
         for(BeanConfig.Bean bean: beans) {
             beanNameToBeanInfoMapper.put(bean.getName(), bean);
         }
 
         validateBeanConfig(beans);
-
         registerBeans(beans);
     }
 
-    private void registerBeans(BeanConfig.Bean[] beans) throws BeansException {
+    private void registerBeans(Collection<BeanConfig.Bean> beans) throws BeansException {
         for(BeanConfig.Bean bean: beans) {
             registerAndGetBean(bean.getName());
         }
@@ -97,9 +104,9 @@ public class JsonBeanContainer extends GenericBeanContainer {
         return parameters;
     }
 
-    private void validateBeanConfig(BeanConfig.Bean[] beans) throws NoUniqueBeanException, CircularReferenceBeanException, BeanNotValidException {
+    private void validateBeanConfig(Collection<BeanConfig.Bean> beans) throws NoUniqueBeanException, CircularReferenceBeanException, BeanNotValidException {
         // Bean 이름 중복 검증
-        Map<String, Long> beanNameCount = Arrays.stream(beans).collect(Collectors.groupingBy(
+        Map<String, Long> beanNameCount = beans.stream().collect(Collectors.groupingBy(
                 f -> f.name, Collectors.counting()
         ));
         for (String beanName : beanNameCount.keySet()) {
