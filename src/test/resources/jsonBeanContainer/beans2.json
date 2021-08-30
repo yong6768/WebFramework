@@ -1,0 +1,14 @@
+{
+  "beans": [
+    {
+      "name": "helloService",
+      "class": "testmvc.jsonBeanContainer.service.TestHelloService",
+      "dependencies": []
+    },
+    {
+      "name": "worldService",
+      "class": "testmvc.jsonBeanContainer.service.TestWorldService",
+      "dependencies": []
+    }
+  ]
+}

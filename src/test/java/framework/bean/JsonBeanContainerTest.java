@@ -5,12 +5,14 @@ import framework.exception.bean.BeanNotValidException;
 import framework.exception.bean.BeansException;
 import framework.exception.bean.CircularReferenceBeanException;
 import framework.exception.bean.NoUniqueBeanException;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import testmvc.jsonBeanContainer.controller.AutowiredCheckController;
 import testmvc.jsonBeanContainer.controller.TestHelloWorldController;
 
 import java.io.IOException;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class JsonBeanContainerTest {
@@ -72,5 +74,14 @@ class JsonBeanContainerTest {
                 NoUniqueBeanException.class,
                 () -> new JsonBeanContainer(prefix+"/dupBeanName.json")
         );
+    }
+
+    @Test
+    void JSON_파일_여러개() throws IOException, BeansException {
+        JsonBeanContainer beanContainer = new JsonBeanContainer(prefix+"/beans1.json", prefix+"/beans2.json");
+
+        assertThat(beanContainer.getBean("/hello-world")).isNotNull();
+        assertThat(beanContainer.getBean("helloService")).isNotNull();
+        assertThat(beanContainer.getBean("worldService")).isNotNull();
     }
 }
