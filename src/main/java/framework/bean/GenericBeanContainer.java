@@ -17,6 +17,10 @@ public class GenericBeanContainer implements BeanContainer {
 
     private final ConcurrentHashMap<String, Object> beanContainer = new ConcurrentHashMap<>();
 
+    public GenericBeanContainer() {
+        beanContainer.put("BeanContainer", this);
+    }
+
     @Override
     public void registerBean(String name, Object bean) throws BeanStoreException {
         Assert.notNull(name, "name must not be null");

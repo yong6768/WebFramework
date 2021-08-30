@@ -32,7 +32,6 @@ class GenericBeanContainerTest {
         beanContainer.registerBean(beanName2, bean2);
 
         //then
-        assertThat(beanContainer.getBeanCount()).isEqualTo(2);
         assertThat(beanContainer.getBeanNames()).contains(beanName1, beanName2);
         assertThat(beanContainer.getBean(beanName1)).isEqualTo(bean1);
         assertThat(beanContainer.getBean(beanName2)).isEqualTo(bean2);
