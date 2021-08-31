@@ -1,0 +1,21 @@
+{
+  "beans": [
+    {
+      "name": "BeanContainer",
+      "class": "framework.bean.JsonBeanContainer",
+      "dependencies": []
+    },
+    {
+      "name": "BeanNameUrlHandlerMapping",
+      "class": "framework.servlet.handler.BeanNameUrlHandlerMapping",
+      "dependencies": [
+        "BeanContainer"
+      ]
+    },
+    {
+      "name": "SimpleControllerHandlerAdapter",
+      "class": "framework.servlet.handler.mvc.SimpleControllerHandlerAdapter",
+      "dependencies": []
+    }
+  ]
+}

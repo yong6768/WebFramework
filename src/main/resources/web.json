@@ -1,0 +1,17 @@
+{
+  "beans": [
+    {
+      "name": "/hello",
+      "class": "web.controller.HelloController",
+      "dependencies": [
+        "helloService"
+      ]
+    },
+    {
+      "name": "helloService",
+      "class": "web.service.HelloService",
+      "dependencies": [
+      ]
+    }
+  ]
+}

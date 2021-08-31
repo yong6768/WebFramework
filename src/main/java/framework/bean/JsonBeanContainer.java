@@ -70,7 +70,7 @@ public class JsonBeanContainer extends GenericBeanContainer {
         } catch (BeansException beansException) {
             throw beansException;
         } catch (Exception e) {
-            throw new BeanNotValidException(e);
+            throw new BeanNotValidException("Bean["+beanName+"] is not valid", e);
         } finally {
         }
     }

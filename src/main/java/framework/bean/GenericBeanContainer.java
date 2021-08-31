@@ -29,7 +29,7 @@ public class GenericBeanContainer implements BeanContainer {
             throw new BeanStoreException("Bean name is already registered, Bean: ["+name+"]");
         }
 
-        log.info("bean in registered, name: {}, bean: {}-{}", name, bean.getClass().getName(), bean.hashCode());
+        log.info("bean is registered, name: {}, bean: {}-{}", name, bean.getClass().getName(), bean.hashCode());
         beanContainer.put(name, bean);
     }
 
@@ -40,7 +40,7 @@ public class GenericBeanContainer implements BeanContainer {
             throw new NoSuchBeanException("Bean is not registered, Bean: ["+beanName+"]");
         }
 
-        log.info("bean in removed, name: {}", beanName);
+        log.info("bean is removed, name: {}", beanName);
         beanContainer.remove(beanName);
     }
 

@@ -1,5 +1,6 @@
 package framework.was;
 
+import framework.bean.BeanContainer;
 import framework.dispatcherServlet.DispatcherServlet;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.Context;
@@ -17,6 +18,11 @@ import java.io.PrintWriter;
 
 @Slf4j
 public class EmbeddedTomcat {
+    public final BeanContainer beanContainer;
+
+    public EmbeddedTomcat(BeanContainer beanContainer) {
+        this.beanContainer = beanContainer;
+    }
 
     private static final int PORT = 8080;
 
@@ -33,7 +39,7 @@ public class EmbeddedTomcat {
         String servletName = "dispatcherServlet";
         String urlPattern = "/";
 
-        tomcat.addServlet(contextPath, servletName, new DispatcherServlet());
+        tomcat.addServlet(contextPath, servletName, new DispatcherServlet(this.beanContainer));
         context.addServletMappingDecoded(urlPattern, servletName);
 
         tomcat.start();

@@ -2,12 +2,14 @@ package framework.servlet.handler;
 
 import framework.bean.BeanContainer;
 import framework.exception.bean.NoSuchBeanException;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
+@Slf4j
 public class BeanNameUrlHandlerMapping implements HandlerMapping {
     private final BeanContainer beanContainer;
     private HashMap<String, Object> urlHandlerMap = null;
