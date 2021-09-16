@@ -1,7 +1,7 @@
 {
   "beans": [
     {
-      "name": "/hello",
+      "name": "/hello/*",
       "class": "web.controller.HelloController",
       "dependencies": [
         "helloService"

@@ -2,6 +2,8 @@ package framework.servlet.handler;
 
 import framework.bean.BeanContainer;
 import framework.exception.bean.NoSuchBeanException;
+import framework.exception.handler.HandlerNotFoundException;
+import framework.util.UrlPatternMatcher;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,7 +28,15 @@ public class BeanNameUrlHandlerMapping implements HandlerMapping {
         URL url = new URL(request.getRequestURL().toString());
         String path = url.getPath();
 
-        return urlHandlerMap.get(path);
+        UrlPatternMatcher patternMatcher = new UrlPatternMatcher();
+        for(String beanName: urlHandlerMap.keySet()) {
+            System.out.println("beanName = " + beanName);
+            if(patternMatcher.match(beanName, path)) {
+                return urlHandlerMap.get(beanName);
+            }
+        }
+
+        throw new HandlerNotFoundException("No Handler for path["+path+"]");
     }
 
     public void initUrlHandlerMap() throws NoSuchBeanException {
