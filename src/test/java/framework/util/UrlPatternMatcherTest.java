@@ -11,9 +11,8 @@ class UrlPatternMatcherTest {
         UrlPatternMatcher urlPatternMatcher = new UrlPatternMatcher();
 
         assertThat(urlPatternMatcher.match("/*/b/*/d/*/f/**", "/a/b/c/d/e/f")).isTrue();
-
-
-
+        assertThat(urlPatternMatcher.match("/hello/*/a", "/hello/world/a")).isTrue();
+        assertThat(urlPatternMatcher.match("/hello/*/*", "/hello/world/a")).isTrue();
 
     }
 
