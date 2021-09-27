@@ -1,7 +1,7 @@
 package web.controller;
 
 import framework.servlet.handler.mvc.Controller;
-import framework.servlet.handler.mvc.ModelAndView;
+import framework.servlet.handler.mvc.view.ModelAndView;
 import lombok.AllArgsConstructor;
 import web.service.HelloService;
 

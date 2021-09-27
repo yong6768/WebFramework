@@ -2,6 +2,7 @@ package framework.was;
 
 import framework.bean.BeanContainer;
 import framework.dispatcherServlet.DispatcherServlet;
+import framework.servlet.handler.mvc.view.ThymeleafViewResolver;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
@@ -32,14 +33,13 @@ public class EmbeddedTomcat {
         tomcat.setPort(PORT);
 
         String contextPath = "/";
-        String docBase = new File(".").getAbsolutePath();
-
+        String docBase = new File("./src/main/resources").getAbsolutePath();
         Context context = tomcat.addContext(contextPath, docBase);
 
         String servletName = "dispatcherServlet";
         String urlPattern = "/";
 
-        tomcat.addServlet(contextPath, servletName, new DispatcherServlet(this.beanContainer));
+        tomcat.addServlet(contextPath, servletName, new DispatcherServlet(this.beanContainer, new ThymeleafViewResolver()));
         context.addServletMappingDecoded(urlPattern, servletName);
 
         tomcat.start();

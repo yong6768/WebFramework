@@ -1,4 +1,4 @@
-package framework.servlet.handler.mvc;
+package framework.servlet.handler.mvc.view;
 
 import javax.swing.text.View;
 import java.util.LinkedHashMap;
@@ -15,6 +15,13 @@ public class ModelAndView {
     public ModelAndView setView(View view) {
         this.view = view;
         return this;
+    }
+
+    public String getViewName() {
+        if(this.view instanceof String) {
+            return (String)this.view;
+        }
+        return null;
     }
 
     public ModelAndView setViewName(String viewName) {
