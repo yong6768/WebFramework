@@ -1,6 +1,7 @@
 package framework.servlet.handler;
 
 import framework.bean.BeanContainer;
+import framework.bean.Component;
 import framework.exception.bean.NoSuchBeanException;
 import framework.exception.handler.HandlerNotFoundException;
 import framework.util.UrlPatternMatcher;
@@ -13,6 +14,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Slf4j
+@Component
 public class BeanNameUrlHandlerMapping implements HandlerMapping {
     private final BeanContainer beanContainer;
     private TreeMap<String, Object> urlHandlerMap = null;

@@ -18,7 +18,7 @@ public class GenericBeanContainer implements BeanContainer {
     private final ConcurrentHashMap<String, Object> beanContainer = new ConcurrentHashMap<>();
 
     public GenericBeanContainer() {
-        beanContainer.put("BeanContainer", this);
+        beanContainer.put(BeanContainer.class.getName(), this);
     }
 
     @Override

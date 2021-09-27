@@ -1,5 +1,6 @@
 package framework;
 
+import framework.bean.AnnotationBeanContainer;
 import framework.bean.BeanContainer;
 import framework.bean.JsonBeanContainer;
 import framework.was.EmbeddedTomcat;
@@ -10,7 +11,8 @@ public class Framework {
 
     public static void run(Class<?> clazz) {
         try {
-            BeanContainer beanContainer = new JsonBeanContainer("DispatcherServlet.json", "web.json");
+//            BeanContainer beanContainer = new JsonBeanContainer("DispatcherServlet.json", "web.json");
+            BeanContainer beanContainer = new AnnotationBeanContainer(Framework.class.getPackage(), clazz.getPackage());
             EmbeddedTomcat tomcat = new EmbeddedTomcat(beanContainer);
             tomcat.start();
         } catch (Exception e) {

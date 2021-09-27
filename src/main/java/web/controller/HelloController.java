@@ -1,5 +1,6 @@
 package web.controller;
 
+import framework.bean.Component;
 import framework.servlet.handler.mvc.Controller;
 import framework.servlet.handler.mvc.view.ModelAndView;
 import lombok.AllArgsConstructor;
@@ -9,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @AllArgsConstructor
+@Component(name="/hello")
 public class HelloController implements Controller {
     private final HelloService helloService;
 

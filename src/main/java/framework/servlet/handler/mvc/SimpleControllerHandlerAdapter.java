@@ -1,5 +1,6 @@
 package framework.servlet.handler.mvc;
 
+import framework.bean.Component;
 import framework.exception.handler.HandlerNotSupportException;
 import framework.servlet.handler.HandlerAdapter;
 import framework.servlet.handler.mvc.view.ModelAndView;
@@ -7,6 +8,7 @@ import framework.servlet.handler.mvc.view.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+@Component
 public class SimpleControllerHandlerAdapter implements HandlerAdapter {
     @Override
     public boolean supports(Object handler) {
