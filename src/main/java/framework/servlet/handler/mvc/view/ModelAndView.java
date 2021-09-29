@@ -1,6 +1,5 @@
 package framework.servlet.handler.mvc.view;
 
-import javax.swing.text.View;
 import java.util.LinkedHashMap;
 import java.util.Map;
 

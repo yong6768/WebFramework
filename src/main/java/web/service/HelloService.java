@@ -1,8 +1,8 @@
 package web.service;
 
-import framework.bean.Component;
+import framework.servlet.handler.mvc.annotation.Service;
 
-@Component
+@Service
 public class HelloService {
     public String getHelloMessage() {
         return "Hello";

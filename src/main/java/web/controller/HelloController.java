@@ -1,25 +1,34 @@
 package web.controller;
 
-import framework.bean.Component;
-import framework.servlet.handler.mvc.Controller;
-import framework.servlet.handler.mvc.view.ModelAndView;
+import framework.bean.Bean;
+import framework.servlet.handler.mvc.annotation.Controller;
+import framework.servlet.handler.mvc.annotation.RequestBody;
+import framework.servlet.handler.mvc.annotation.RequestMapping;
+import framework.servlet.handler.mvc.annotation.RequestMethod;
 import lombok.AllArgsConstructor;
+import web.dao.HelloRequest;
 import web.service.HelloService;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 @AllArgsConstructor
-@Component(name="/hello")
-public class HelloController implements Controller {
+@Controller
+@RequestMapping("/hello")
+public class HelloController {
     private final HelloService helloService;
 
-    @Override
-    public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        String helloMessage = helloService.getHelloMessage();
+    @Bean
+    public HelloService helloService() {
+        return new HelloService();
+    }
 
-        ModelAndView mv = new ModelAndView();
-        return mv.setViewName("hello")
-                .addAttribute("helloMessage", helloMessage);
+    @RequestMapping(value = "/world", method = RequestMethod.POST)
+    public String helloWorld(
+            HttpServletRequest request,
+            @RequestBody HelloRequest helloRequest
+    ) {
+        System.out.println("request = " + request);
+        System.out.println("helloRequest = " + helloRequest);
+        return "hello";
     }
 }

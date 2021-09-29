@@ -1,9 +1,15 @@
 package framework.bean;
 
 import com.google.common.reflect.ClassPath;
-import framework.exception.bean.*;
+import framework.exception.bean.BeanNotValidException;
+import framework.exception.bean.BeansException;
+import framework.exception.bean.NoSuchBeanException;
 
 import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -16,11 +22,11 @@ public class AnnotationBeanContainer extends GenericBeanContainer {
     public AnnotationBeanContainer(Package... root) throws IOException, ClassNotFoundException, BeansException, InstantiationException, IllegalAccessException, InvocationTargetException {
         List<String> classes = searchPackage(root);
         setBeanCandidates(classes);
-        checkCircularReference();
+//        checkCircularReference();
         registerBean();
     }
 
-    private List<String> searchPackage(Package... packages) throws IOException, ClassNotFoundException {
+    private List<String> searchPackage(Package... packages) throws IOException {
         ClassPath classPath = ClassPath.from(ClassLoader.getSystemClassLoader());
 
         List<String> classNames = new ArrayList<>();
@@ -36,18 +42,17 @@ public class AnnotationBeanContainer extends GenericBeanContainer {
         return classNames;
     }
 
-    private void setBeanCandidates(List<String> classes) throws ClassNotFoundException, BeanNotValidException, NoUniqueBeanException {
+    private void setBeanCandidates(List<String> classes) throws ClassNotFoundException, BeanNotValidException {
         for (String className : classes) {
             Class clazz = Class.forName(className);
 
-            Component component = (Component)clazz.getAnnotation(Component.class);
-            if(component == null)
+            if(clazz.isAnnotation())
+                continue;
+
+            if(!hasComponentAnnotation(clazz))
                 continue;
 
             String beanName = getBeanName(clazz);
-            if(beanNameToObject.get(beanName) != null) {
-                throw new NoUniqueBeanException("Bean["+beanName+"] is declared many times");
-            }
             beanNameToObject.put(beanName, clazz);
 
             Method[] methods = clazz.getMethods();
@@ -60,9 +65,6 @@ public class AnnotationBeanContainer extends GenericBeanContainer {
                 if(bean == null)
                     continue;
                 beanName = getBeanName(method);
-                if(beanNameToObject.get(beanName) != null) {
-                    throw new NoUniqueBeanException("Bean["+beanName+"] is declared many times");
-                }
                 beanNameToObject.put(beanName, method);
             }
         }
@@ -101,6 +103,7 @@ public class AnnotationBeanContainer extends GenericBeanContainer {
 
                 Class<?> declaringClass = method.getDeclaringClass();
                 String parentBeanName = getBeanName(declaringClass);
+
                 Object parentBean = registerAndGetBean(parentBeanName);
 
                 List<Object> childParameters = new ArrayList<>();
@@ -111,33 +114,11 @@ public class AnnotationBeanContainer extends GenericBeanContainer {
 
                 bean = method.invoke(parentBean, childParameters.toArray());
             } else {
-                throw new BeanNotValidException();
+                throw new BeanNotValidException("beenSeed is not Class and Method, "+beanName);
             }
             super.registerBean(beanName, bean);
             return bean;
         }
-    }
-
-    private String getBeanName(Object o) {
-        if(o instanceof Class) {
-            Class clazz = (Class) o;
-            Component component = (Component) clazz.getAnnotation(Component.class);
-            String beanName = component != null ? component.name() : null;
-            if(beanName == null || beanName.equals("")) {
-                beanName = clazz.getName();
-            }
-            return beanName;
-        } else if(o instanceof Method) {
-            Method method = (Method) o;
-            Bean bean = (Bean) method.getAnnotation(Bean.class);
-            String beanName = bean != null ? bean.name() : null;
-            if(beanName == null || beanName.equals("")) {
-                beanName = method.getName();
-            }
-            return beanName;
-        }
-
-        return null;
     }
 
     private String getBeanName(Class clazz) {
@@ -153,7 +134,7 @@ public class AnnotationBeanContainer extends GenericBeanContainer {
         Bean bean = method.getAnnotation(Bean.class);
         String beanName = bean != null ? bean.name() : null;
         if(beanName == null || beanName.equals("")) {
-            beanName = method.getName();
+            beanName = method.getReturnType().getName();
         }
         return beanName;
     }
@@ -169,7 +150,7 @@ public class AnnotationBeanContainer extends GenericBeanContainer {
                     .collect(Collectors.toList());
 
             if(autowiredConstructors.size() != 1) {
-                throw new BeanNotValidException("Bean must have only 1 constructor or only 1 @Autowired annotated constructor");
+                throw new BeanNotValidException("Bean must have only 1 constructor or only 1 @Autowired annotated constructor, "+clazz);
             }
 
             constructor = autowiredConstructors.get(0);
@@ -180,6 +161,9 @@ public class AnnotationBeanContainer extends GenericBeanContainer {
 
     private List<String> getDependencies(String beanName) throws BeanNotValidException {
         Object o = beanNameToObject.get(beanName);
+
+        if(o.getClass().isAnnotation())
+            return new ArrayList<>();
 
         if(o instanceof Class) {
             Class clazz = (Class) o;
@@ -201,30 +185,51 @@ public class AnnotationBeanContainer extends GenericBeanContainer {
         return new ArrayList<>();
     }
 
-    private void checkCircularReference() throws BeanNotValidException, CircularReferenceBeanException {
-        for (String beanName : beanNameToObject.keySet()) {
-            doCheckCircularReference(beanName, new ArrayList<>());
-        }
-    }
+//    private void checkCircularReference() throws BeanNotValidException, CircularReferenceBeanException {
+//        for (String beanName : beanNameToObject.keySet()) {
+//            doCheckCircularReference(beanName, new ArrayList<>());
+//        }
+//    }
+//
+//    private void doCheckCircularReference(String beanName, List<String> check) throws CircularReferenceBeanException, BeanNotValidException {
+//        System.out.println("beanName = " + beanName);
+//        if(check.contains(beanName)) {
+//            check.add(beanName);
+//            throw new CircularReferenceBeanException(String.join("->", check));
+//        }
+//        check.add(beanName);
+//        Object o = beanNameToObject.get(beanName);
+//        String nextBeanName = getBeanName(o);
+//
+//        for (String dependency: getDependencies(nextBeanName)) {
+//            doCheckCircularReference(dependency, check);
+//        }
+//
+//        check.remove(check.size()-1);
+//    }
 
-    private void doCheckCircularReference(String beanName, List<String> check) throws CircularReferenceBeanException, BeanNotValidException {
-        if(check.contains(beanName)) {
-            check.add(beanName);
-            throw new CircularReferenceBeanException(String.join("->", check));
-        }
-        check.add(beanName);
-        Object o = beanNameToObject.get(beanName);
-        String nextBeanName = getBeanName(o);
-
-        if(nextBeanName == null) {
-            check.remove(check.size()-1);
-            throw new BeanNotValidException("Bean["+check.get(check.size()-1)+"] depends on Bean["+beanName+"], but not exists");
+    private boolean hasComponentAnnotation(Class clazz) {
+        if(clazz.getTypeName() == Component.class.getTypeName()) {
+            return true;
         }
 
-        for (String dependency: getDependencies(nextBeanName)) {
-            doCheckCircularReference(dependency, check);
+        if(clazz.getTypeName() == Retention.class.getTypeName() ||
+                clazz.getTypeName() == Documented.class.getTypeName() ||
+                clazz.getTypeName() == Target.class.getTypeName()
+        ) {
+            return false;
         }
 
-        check.remove(check.size()-1);
+        List<? extends Class<? extends Annotation>> annotationTypes = Arrays.stream(clazz.getDeclaredAnnotations())
+                .map(annotation -> annotation.annotationType())
+                .collect(Collectors.toList());
+
+        for (Class<? extends Annotation> annotationType : annotationTypes) {
+            if(hasComponentAnnotation(annotationType)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

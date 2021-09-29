@@ -81,7 +81,8 @@ public class DispatcherServlet extends GenericDispatcherServlet {
             View view = viewResolver.resolveViewName(mv.getViewName());
             view.render(mv.getModel(), req, resp);
         } else {
-            resp.getWriter().println(new ObjectMapper().writeValueAsString(mv));
+            Object view = mv.getView();
+            resp.getWriter().print(new ObjectMapper().writeValueAsString(view));
         }
     }
 

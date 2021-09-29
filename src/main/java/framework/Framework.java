@@ -1,6 +1,8 @@
 package framework;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import framework.bean.AnnotationBeanContainer;
+import framework.bean.Bean;
 import framework.bean.BeanContainer;
 import framework.bean.JsonBeanContainer;
 import framework.was.EmbeddedTomcat;

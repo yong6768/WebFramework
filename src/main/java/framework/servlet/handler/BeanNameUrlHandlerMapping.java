@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Slf4j
-@Component
 public class BeanNameUrlHandlerMapping implements HandlerMapping {
     private final BeanContainer beanContainer;
     private TreeMap<String, Object> urlHandlerMap = null;
