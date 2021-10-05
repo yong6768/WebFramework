@@ -6,6 +6,7 @@ import java.util.Map;
 public class ModelAndView {
     private Object view;
     private LinkedHashMap<String, Object> model = new LinkedHashMap();
+    private boolean needRender = true;
 
     public Object getView() {
         return view;
@@ -26,6 +27,15 @@ public class ModelAndView {
     public ModelAndView setViewName(String viewName) {
         this.view = viewName;
         return this;
+    }
+
+    public ModelAndView setNeedRender(boolean b) {
+        this.needRender = b;
+        return this;
+    }
+
+    public boolean needRender() {
+        return this.needRender;
     }
 
     public ModelAndView addAttribute(String attributeName, Object attribute) {

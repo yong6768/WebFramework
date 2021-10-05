@@ -1,10 +1,7 @@
 package web.controller;
 
 import framework.bean.Bean;
-import framework.servlet.handler.mvc.annotation.Controller;
-import framework.servlet.handler.mvc.annotation.RequestBody;
-import framework.servlet.handler.mvc.annotation.RequestMapping;
-import framework.servlet.handler.mvc.annotation.RequestMethod;
+import framework.servlet.handler.mvc.annotation.*;
 import lombok.AllArgsConstructor;
 import web.dao.HelloRequest;
 import web.service.HelloService;
@@ -23,12 +20,25 @@ public class HelloController {
     }
 
     @RequestMapping(value = "/world", method = RequestMethod.POST)
-    public String helloWorld(
+    @ResponseBody
+    public Integer helloWorld(
             HttpServletRequest request,
             @RequestBody HelloRequest helloRequest
     ) {
         System.out.println("request = " + request);
         System.out.println("helloRequest = " + helloRequest);
-        return "hello";
+        return 2000;
+//        return "hello";
+    }
+
+    @RequestMapping(value = "/world2", method = RequestMethod.GET)
+    @ResponseBody
+    public String helloWorld2 (
+            @RequestParam("hello") String hello,
+            @RequestParam("age") int age
+    ) {
+        System.out.println("hello = " + hello);
+        System.out.println("age = " + age);
+        return hello+"-"+age;
     }
 }

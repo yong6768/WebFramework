@@ -2,20 +2,14 @@ package framework.was;
 
 import framework.bean.BeanContainer;
 import framework.dispatcherServlet.DispatcherServlet;
+import framework.exception.bean.BeansException;
 import framework.servlet.handler.mvc.view.ThymeleafViewResolver;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
-import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
 
 @Slf4j
 public class EmbeddedTomcat {
@@ -27,7 +21,7 @@ public class EmbeddedTomcat {
 
     private static final int PORT = 8080;
 
-    public void start() throws LifecycleException {
+    public void start() throws LifecycleException, BeansException {
         Tomcat tomcat = new Tomcat();
         tomcat.setBaseDir(System.getProperty("java.io.tmpdir"));
         tomcat.setPort(PORT);

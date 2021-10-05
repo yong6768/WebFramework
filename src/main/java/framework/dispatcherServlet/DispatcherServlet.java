@@ -2,6 +2,12 @@ package framework.dispatcherServlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import framework.bean.BeanContainer;
+import framework.bean.Component;
+import framework.bean.WebMvcConfigurer;
+import framework.converter.Converter;
+import framework.converter.ConverterFactory;
+import framework.converter.ConverterRegistry;
+import framework.exception.bean.BeansException;
 import framework.exception.handler.HandlerNotFoundException;
 import framework.servlet.handler.HandlerAdapter;
 import framework.servlet.handler.HandlerMapping;
@@ -16,21 +22,24 @@ import java.util.List;
 
 @Slf4j
 public class DispatcherServlet extends GenericDispatcherServlet {
-    public final BeanContainer beanContainer;
-    public final ViewResolver viewResolver;
+    private final BeanContainer beanContainer;
+    private final ViewResolver viewResolver;
+    private final ConverterFactory converterFactory;
 
     public List<HandlerMapping> handlerMappings = new ArrayList<>();
     public List<HandlerAdapter> handlerAdapters = new ArrayList<>();
 
-    public DispatcherServlet(BeanContainer beanContainer, ViewResolver viewResolver) {
+    public DispatcherServlet(BeanContainer beanContainer, ViewResolver viewResolver) throws BeansException {
         this.beanContainer = beanContainer;
         this.viewResolver = viewResolver;
+        this.converterFactory = beanContainer.getBean(ConverterFactory.class);
         init();
     }
 
     public void init() {
         initHandlerMappings();
         initHandlerAdapters();
+        initConverters();
     }
 
     public void initHandlerMappings() {
@@ -55,6 +64,15 @@ public class DispatcherServlet extends GenericDispatcherServlet {
         } catch (Exception e){}
     }
 
+    public void initConverters() {
+        try {
+            WebMvcConfigurer webMvcConfigurer = beanContainer.getBean(WebMvcConfigurer.class);
+            ConverterRegistry converterRegistry = webMvcConfigurer.addConverter();
+            for (Converter converter : converterRegistry.getConverters()) {
+                converterFactory.addConverter(converter);
+            }
+        } catch (Exception e){}
+    }
 
 
     @Override
@@ -65,7 +83,7 @@ public class DispatcherServlet extends GenericDispatcherServlet {
             // 404 Error
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);
         } catch (Exception e) {
-
+            log.error("doDispatchError", e);
         }
     }
 
@@ -81,8 +99,10 @@ public class DispatcherServlet extends GenericDispatcherServlet {
             View view = viewResolver.resolveViewName(mv.getViewName());
             view.render(mv.getModel(), req, resp);
         } else {
-            Object view = mv.getView();
-            resp.getWriter().print(new ObjectMapper().writeValueAsString(view));
+            if(mv.needRender()) {
+                Object view = mv.getView();
+                resp.getWriter().print(new ObjectMapper().writeValueAsString(view));
+            }
         }
     }
 
