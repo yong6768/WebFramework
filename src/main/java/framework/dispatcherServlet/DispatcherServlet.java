@@ -12,6 +12,7 @@ import framework.exception.handler.HandlerNotFoundException;
 import framework.servlet.handler.HandlerAdapter;
 import framework.servlet.handler.HandlerMapping;
 import framework.servlet.handler.mvc.view.*;
+import framework.servlet.interceptor.InterceptorRegistry;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.http.HttpServletRequest;
@@ -68,6 +69,9 @@ public class DispatcherServlet extends GenericDispatcherServlet {
         try {
             WebMvcConfigurer webMvcConfigurer = beanContainer.getBean(WebMvcConfigurer.class);
             ConverterRegistry converterRegistry = webMvcConfigurer.addConverter();
+            if(converterRegistry == null)
+                return;
+
             for (Converter converter : converterRegistry.getConverters()) {
                 converterFactory.addConverter(converter);
             }
